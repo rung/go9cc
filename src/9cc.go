@@ -7,7 +7,7 @@ import (
 
 func main() {
 	if len(os.Args) != 2 {
-		fmt.Errorf("the number of arguments is wrong.")
+		fmt.Fprintf(os.Stderr, "The number of arguments is wrong.\n")
 		return
 	}
 

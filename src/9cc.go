@@ -14,15 +14,27 @@ type Token struct {
 	Input string    // token string(for an error message)
 }
 
+type Node struct {
+	Ty  TokenType
+	Lhs *Node
+	Rhs *Node
+	Val int
+}
+
 const (
 	TK_NUM   = "INT"
 	TK_EOF   = "EOF"
 	TK_PLUS  = "+"
 	TK_MINUS = "-"
+	TK_MUL   = "*"
+	TK_DIV   = "/"
+	TK_OP    = "("
+	TK_CP    = ")"
 )
 
 // トークナイズした結果のトークン列はこのスライスに保存する
 var tokens []Token
+var pos int
 
 func tokenize(l string) {
 	tokens = []Token{}
@@ -37,7 +49,7 @@ func tokenize(l string) {
 			continue
 		}
 
-		if c == '+' || c == '-' {
+		if c == '+' || c == '-' || c == '*' || c == '/' || c == '(' || c == ')' {
 			t := Token{
 				Ty:    TokenType(c),
 				Input: l,
@@ -81,6 +93,8 @@ func main() {
 
 	l := os.Args[1]
 	tokenize(l)
+	// n := add()
+	// fmt.Printf("%T", n)
 
 	fmt.Println(".intel_syntax noprefix")
 	fmt.Println(".global main")
@@ -141,4 +155,82 @@ func isDigit(ch byte) bool {
 
 func isSpace(ch byte) bool {
 	return ch == ' ' || ch == '\t' || ch == '\n' || ch == '\r'
+}
+
+func newNode(ty TokenType, lhs *Node, rhs *Node) *Node {
+	n := &Node{
+		Ty:  ty,
+		Lhs: lhs,
+		Rhs: rhs,
+	}
+	return n
+}
+
+func newNodeNum(val int) *Node {
+	n := &Node{
+		Ty:  TK_NUM,
+		Val: val,
+	}
+	return n
+}
+
+func consume(ty TokenType) bool {
+	if tokens[pos].Ty != ty {
+		return false
+	}
+	pos++
+	return true
+}
+
+func add() *Node {
+	node := mul()
+
+	for {
+		if consume("+") {
+			node = newNode("+", node, mul())
+		} else if consume("-") {
+			node = newNode("-", node, mul())
+		} else {
+			return node
+		}
+	}
+}
+
+func mul() *Node {
+	node := term()
+
+	for {
+		if consume("*") {
+			node = newNode("*", node, term())
+		} else if consume("/") {
+			node = newNode("/", node, term())
+		} else {
+			return node
+		}
+	}
+}
+
+func term() *Node {
+
+	if consume("(") {
+		node := add()
+		if !consume(")") {
+			fmt.Fprintf(os.Stderr, "There isn't a closing parenthesis: %s",
+				tokens[pos].Input)
+			os.Exit(1)
+		}
+		return node
+	}
+
+	if tokens[pos].Ty == TK_NUM {
+		n := newNodeNum(tokens[pos].Val)
+		pos++
+		return n
+	}
+
+	fmt.Fprintf(os.Stderr, "This token isn't a number or opening parenhesis: %s",
+		tokens[pos].Input)
+	os.Exit((1))
+
+	return nil
 }

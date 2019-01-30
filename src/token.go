@@ -15,16 +15,18 @@ type Token struct {
 }
 
 const (
-	TK_NUM   = "INT"
-	TK_EOF   = "EOF"
-	TK_PLUS  = "+"
-	TK_MINUS = "-"
-	TK_MUL   = "*"
-	TK_DIV   = "/"
-	TK_OP    = "("
-	TK_CP    = ")"
-	TK_IDENT = "IDENT"
-	TK_EQUAL = "="
+	TK_NUM    = "INT"
+	TK_EOF    = "EOF"
+	TK_PLUS   = "+"
+	TK_MINUS  = "-"
+	TK_MUL    = "*"
+	TK_DIV    = "/"
+	TK_OP     = "("
+	TK_CP     = ")"
+	TK_IDENT  = "IDENT"
+	TK_ASSIGN = "="
+	TK_EQ     = "=="
+	TK_NOTEQ  = "!="
 )
 
 // トークナイズした結果のトークン列はこのスライスに保存する

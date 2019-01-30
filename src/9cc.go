@@ -38,7 +38,6 @@ var pos int
 
 func tokenize(l string) {
 	tokens = []Token{}
-	i := 0
 	// Tokenize Loop
 	// rp is ReadPointer
 	for rp := 0; rp < len(l); {
@@ -55,7 +54,6 @@ func tokenize(l string) {
 				Input: l,
 			}
 			tokens = append(tokens, t)
-			i++
 			rp++
 			continue
 		}
@@ -68,7 +66,6 @@ func tokenize(l string) {
 				Val:   num,
 			}
 			tokens = append(tokens, t)
-			i++
 			rp += n
 			continue
 		}
@@ -92,44 +89,21 @@ func main() {
 	}
 
 	l := os.Args[1]
+
+	// tokenize and parse
 	tokenize(l)
-	// n := add()
-	// fmt.Printf("%T", n)
+	n := add()
 
 	fmt.Println(".intel_syntax noprefix")
 	fmt.Println(".global main")
 	fmt.Println("main:")
 
-	if tokens[0].Ty != TK_NUM {
-		error(0)
-	}
+	// generate assembly to read AST.
+	gen(n)
 
-	fmt.Printf("  mov rax, %d\n", tokens[0].Val)
+	fmt.Println("  pop rax")
+	fmt.Println("  ret")
 
-	i := 1
-	for tokens[i].Ty != TK_EOF {
-		if tokens[i].Ty == TK_PLUS {
-			i++
-			if tokens[i].Ty != TK_NUM {
-				error(i)
-			}
-			fmt.Printf("  add rax, %d\n", tokens[i].Val)
-			i++
-			continue
-		}
-
-		if tokens[i].Ty == "-" {
-			i++
-			if tokens[i].Ty != TK_NUM {
-				error(i)
-			}
-			fmt.Printf("  sub rax, %d\n", tokens[i].Val)
-			i++
-			continue
-		}
-		error(i)
-	}
-	fmt.Printf("  ret\n")
 	return
 }
 

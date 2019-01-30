@@ -45,7 +45,7 @@ func tokenize(l string) {
 			continue
 		}
 
-		if c == '+' || c == '-' || c == '*' || c == '/' || c == '(' || c == ')' || c == '=' || c == ';' {
+		if c == '+' || c == '-' || c == '*' || c == '/' || c == '(' || c == ')' || c == ';' {
 			t := Token{
 				Ty:    TokenType(c),
 				Input: l,
@@ -53,6 +53,28 @@ func tokenize(l string) {
 			tokens = append(tokens, t)
 			rp++
 			continue
+		}
+
+		if c == '=' {
+			// "==" op
+			if l[rp+1] == '=' {
+				t := Token{
+					Ty:    TokenType("=="),
+					Input: l[rp:],
+				}
+				tokens = append(tokens, t)
+				rp += 2
+				continue
+			} else {
+				// "=" op
+				t := Token{
+					Ty:    TokenType("="),
+					Input: l[rp:],
+				}
+				tokens = append(tokens, t)
+				rp++
+				continue
+			}
 		}
 
 		if isDigit(c) {

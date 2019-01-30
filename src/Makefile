@@ -1,5 +1,7 @@
-9cc: 
-	go build -o 9cc *.go
+SRCS=$(wildcard *.go)
+
+9cc: $(SRCS)
+	go build -o 9cc $(SRCS)
 
 test: 9cc
 	./test.sh

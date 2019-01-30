@@ -6,10 +6,40 @@ import (
 )
 
 type Node struct {
-	Ty  TokenType
-	Lhs *Node
-	Rhs *Node
-	Val int
+	Ty   TokenType
+	Lhs  *Node
+	Rhs  *Node
+	Val  int    // // used when Ty is TK_INT
+	Name string // used when Ty is TK_IDENT
+}
+
+var code []*Node
+
+func program() {
+	code = []*Node{}
+
+	for tokens[pos].Ty != TK_EOF {
+		code = append(code, stmt())
+	}
+}
+func stmt() *Node {
+	n := assign()
+	if !consume(";") {
+		fmt.Fprintf(os.Stderr, "This token is not ';': %s", tokens[pos].Input)
+	}
+	return n
+}
+
+func assign() *Node {
+	node := add()
+
+	for {
+		if consume("=") {
+			node = newNode("=", node, add())
+		} else {
+			return node
+		}
+	}
 }
 
 func add() *Node {
@@ -58,6 +88,12 @@ func term() *Node {
 		return n
 	}
 
+	if tokens[pos].Ty == TK_IDENT {
+		n := newNodeIdent(tokens[pos].Input)
+		pos++
+		return n
+	}
+
 	fmt.Fprintf(os.Stderr, "This token isn't a number or opening parenhesis: %s",
 		tokens[pos].Input)
 	os.Exit((1))
@@ -78,6 +114,14 @@ func newNodeNum(val int) *Node {
 	n := &Node{
 		Ty:  TK_NUM,
 		Val: val,
+	}
+	return n
+}
+
+func newNodeIdent(name string) *Node {
+	n := &Node{
+		Ty:   TK_IDENT,
+		Name: name,
 	}
 	return n
 }

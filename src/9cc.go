@@ -15,14 +15,16 @@ func main() {
 
 	// tokenize and parse
 	tokenize(l)
-	n := add()
+	//n := add()
+
+	program()
 
 	fmt.Println(".intel_syntax noprefix")
 	fmt.Println(".global main")
 	fmt.Println("main:")
 
 	// generate assembly to read AST.
-	gen(n)
+	//gen(n)
 
 	fmt.Println("  pop rax")
 	fmt.Println("  ret")

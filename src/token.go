@@ -23,6 +23,8 @@ const (
 	TK_DIV   = "/"
 	TK_OP    = "("
 	TK_CP    = ")"
+	TK_IDENT = "IDENT"
+	TK_EQUAL = "="
 )
 
 // トークナイズした結果のトークン列はこのスライスに保存する
@@ -41,7 +43,7 @@ func tokenize(l string) {
 			continue
 		}
 
-		if c == '+' || c == '-' || c == '*' || c == '/' || c == '(' || c == ')' {
+		if c == '+' || c == '-' || c == '*' || c == '/' || c == '(' || c == ')' || c == '=' || c == ';' {
 			t := Token{
 				Ty:    TokenType(c),
 				Input: l,
@@ -60,6 +62,16 @@ func tokenize(l string) {
 			}
 			tokens = append(tokens, t)
 			rp += n
+			continue
+		}
+
+		if 'a' <= c && c <= 'z' {
+			t := Token{
+				Ty:    TK_IDENT,
+				Input: string(c),
+			}
+			tokens = append(tokens, t)
+			rp++
 			continue
 		}
 

@@ -66,12 +66,13 @@ func tokenize(l string) {
 		}
 
 		if 'a' <= c && c <= 'z' {
+			str, n := readIdent(l[rp:])
 			t := Token{
 				Ty:    TK_IDENT,
-				Input: string(c),
+				Input: str,
 			}
 			tokens = append(tokens, t)
-			rp++
+			rp += n
 			continue
 		}
 
@@ -101,6 +102,18 @@ func readInt(s string) (int, int) {
 		panic(err)
 	}
 	return i, len(s[0:p])
+}
+
+func readIdent(s string) (string, int) {
+	p := 0
+	for 'a' <= s[p] && s[p] <= 'z' {
+		p++
+		if p >= len(s) {
+			break
+		}
+	}
+	str := s[0:p]
+	return str, len(str)
 }
 
 func isDigit(ch byte) bool {

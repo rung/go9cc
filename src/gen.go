@@ -5,6 +5,10 @@ import (
 	"os"
 )
 
+// varibles map
+var maps map[string]int = make(map[string]int)
+var offset int = 1
+
 func gen(n *Node) {
 	if n.Ty == TK_NUM {
 		fmt.Printf("  push %d\n", n.Val)
@@ -57,9 +61,18 @@ func genLval(node *Node) {
 		fmt.Fprintln(os.Stderr, "代入の左辺値が変数ではありません")
 	}
 
-	// stack - charをしてアドレスをpush
-	offset := ('z' - byte(node.Name[0]) + 1) * 8
+	o := getMap(node.Name) * 8
 	fmt.Println("  mov rax, rbp")
-	fmt.Printf("  sub rax, %d\n", offset)
+	fmt.Printf("  sub rax, %d\n", o)
 	fmt.Println("  push rax")
+}
+
+func getMap(v string) int {
+	i, ok := maps[v]
+	if ok == false {
+		maps[v] = offset
+		offset++
+		return maps[v]
+	}
+	return i
 }

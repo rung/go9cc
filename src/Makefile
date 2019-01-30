@@ -1,5 +1,5 @@
 9cc: 
-	go build -o 9cc 9cc.go
+	go build -o 9cc *.go
 
 test: 9cc
 	./test.sh

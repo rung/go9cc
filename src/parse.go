@@ -31,11 +31,25 @@ func stmt() *Node {
 }
 
 func assign() *Node {
-	node := add()
+	node := equality()
 
 	for {
 		if consume("=") {
-			node = newNode("=", node, add())
+			node = newNode("=", node, equality())
+		} else {
+			return node
+		}
+	}
+}
+
+func equality() *Node {
+	node := add()
+
+	for {
+		if consume("==") {
+			node = newNode("==", node, add())
+		} else if consume("!=") {
+			node = newNode("!=", node, add())
 		} else {
 			return node
 		}

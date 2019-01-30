@@ -28,5 +28,9 @@ try 4 "(3+5)/2; "
 try 4 "a=(3+5)/2;a;"
 try 10 "z=5*2;z;"
 try 10 "test=5*2;test;"
+try 1 "test= 5==5;test;"
+try 0 "test= 5==6;test;"
+try 0 "test= 5!=5;test;"
+try 1 "test= 5!=6;test;"
 
 echo OK

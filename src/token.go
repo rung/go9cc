@@ -77,6 +77,22 @@ func tokenize(l string) {
 			}
 		}
 
+		// "!="
+		if c == '!' {
+			if l[rp+1] == '=' {
+				t := Token{
+					Ty:    TokenType("!="),
+					Input: l[rp:],
+				}
+				tokens = append(tokens, t)
+				rp += 2
+				continue
+			} else {
+				fmt.Fprintf(os.Stderr, "Can't tokenize '%s'\n", l[rp:])
+				os.Exit(1)
+			}
+		}
+
 		if isDigit(c) {
 			num, n := readInt(l[rp:])
 			t := Token{

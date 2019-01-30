@@ -50,6 +50,14 @@ func gen(n *Node) {
 	case "/":
 		fmt.Println("  mov rdx, 0")
 		fmt.Println("  div rdi")
+	case "==":
+		fmt.Println("  cmp rdi, rax")
+		fmt.Println("  sete al")
+		fmt.Println("  movzb rax, al")
+	case "!=":
+		fmt.Println("  cmp rdi, rax")
+		fmt.Println("  setne al")
+		fmt.Println("  movzb rax, al")
 	}
 
 	fmt.Println("  push rax")

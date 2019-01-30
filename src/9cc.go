@@ -6,19 +6,37 @@ import (
 	"strconv"
 )
 
+func main() {
+	if len(os.Args) != 2 {
+		fmt.Fprintf(os.Stderr, "The number of arguments is wrong.\n")
+		return
+	}
+
+	l := os.Args[1]
+
+	// tokenize and parse
+	tokenize(l)
+	n := add()
+
+	fmt.Println(".intel_syntax noprefix")
+	fmt.Println(".global main")
+	fmt.Println("main:")
+
+	// generate assembly to read AST.
+	gen(n)
+
+	fmt.Println("  pop rax")
+	fmt.Println("  ret")
+
+	return
+}
+
 type TokenType string
 
 type Token struct {
 	Ty    TokenType // tokentype
 	Val   int       // value if it's integer
 	Input string    // token string(for an error message)
-}
-
-type Node struct {
-	Ty  TokenType
-	Lhs *Node
-	Rhs *Node
-	Val int
 }
 
 const (
@@ -82,31 +100,6 @@ func error(i int) {
 	os.Exit(1)
 }
 
-func main() {
-	if len(os.Args) != 2 {
-		fmt.Fprintf(os.Stderr, "The number of arguments is wrong.\n")
-		return
-	}
-
-	l := os.Args[1]
-
-	// tokenize and parse
-	tokenize(l)
-	n := add()
-
-	fmt.Println(".intel_syntax noprefix")
-	fmt.Println(".global main")
-	fmt.Println("main:")
-
-	// generate assembly to read AST.
-	gen(n)
-
-	fmt.Println("  pop rax")
-	fmt.Println("  ret")
-
-	return
-}
-
 // return converted int, len
 func readInt(s string) (int, int) {
 	p := 0
@@ -129,6 +122,13 @@ func isDigit(ch byte) bool {
 
 func isSpace(ch byte) bool {
 	return ch == ' ' || ch == '\t' || ch == '\n' || ch == '\r'
+}
+
+type Node struct {
+	Ty  TokenType
+	Lhs *Node
+	Rhs *Node
+	Val int
 }
 
 func newNode(ty TokenType, lhs *Node, rhs *Node) *Node {

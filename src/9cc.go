@@ -15,18 +15,28 @@ func main() {
 
 	// tokenize and parse
 	tokenize(l)
-	//n := add()
-
 	program()
 
 	fmt.Println(".intel_syntax noprefix")
 	fmt.Println(".global main")
 	fmt.Println("main:")
 
-	// generate assembly to read AST.
-	//gen(n)
+	// get an area of variables
+	fmt.Println("  push rbp")
+	fmt.Println("  mov rbp, rsp")
+	fmt.Println("  sub rsp, 208")
 
-	fmt.Println("  pop rax")
+	for _, c := range code {
+		gen(c)
+
+		// 式の評価結果としてスタックに一つの値が残っている
+		// はずなので、スタックが溢れないようにポップしておく
+		fmt.Println("  pop rax")
+	}
+
+	// 最後の式の結果がRAXに残っているのでそれが返り値になる
+	fmt.Println("  mov rsp, rbp")
+	fmt.Println("  pop rbp")
 	fmt.Println("  ret")
 
 	return

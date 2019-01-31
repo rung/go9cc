@@ -27,6 +27,7 @@ const (
 	TK_ASSIGN = "="
 	TK_EQ     = "=="
 	TK_NOTEQ  = "!="
+	TK_CALL   = "CALL"
 )
 
 // トークナイズした結果のトークン列はこのスライスに保存する

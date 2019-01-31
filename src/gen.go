@@ -10,6 +10,13 @@ var maps map[string]int = make(map[string]int)
 var offset int = 1
 
 func gen(n *Node) {
+	if n.Ty == TK_CALL {
+		fmt.Printf("  call %s\n", n.Name)
+		//fmt.Println("  push rax")
+		fmt.Println("  push 0")
+		return
+	}
+
 	if n.Ty == TK_NUM {
 		fmt.Printf("  push %d\n", n.Val)
 		return

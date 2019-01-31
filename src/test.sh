@@ -5,7 +5,7 @@ try() {
   input="$2"
 
   ./9cc "$input" > tmp.s
-  gcc -o tmp tmp.s
+  gcc -o tmp tmp.s testprint.o
   ./tmp
   actual="$?"
 
@@ -32,5 +32,6 @@ try 1 "test= 5==5;test;"
 try 0 "test= 5==6;test;"
 try 0 "test= 5!=5;test;"
 try 1 "test= 5!=6;test;"
+try 0 "foo();"
 
 echo OK

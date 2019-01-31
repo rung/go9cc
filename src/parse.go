@@ -43,17 +43,31 @@ func assign() *Node {
 }
 
 func equality() *Node {
-	node := add()
+	node := funcCall()
 
 	for {
 		if consume("==") {
-			node = newNode("==", node, add())
+			node = newNode("==", node, funcCall())
 		} else if consume("!=") {
-			node = newNode("!=", node, add())
+			node = newNode("!=", node, funcCall())
 		} else {
 			return node
 		}
 	}
+}
+
+func funcCall() *Node {
+	node := add()
+
+	if consume("(") {
+		node = newNodeCall(node.Name)
+		if !consume(")") {
+			fmt.Fprintf(os.Stderr, "There isn't a closing parenthesis: %s",
+				tokens[pos].Input)
+			os.Exit(1)
+		}
+	}
+	return node
 }
 
 func add() *Node {
@@ -135,6 +149,14 @@ func newNodeNum(val int) *Node {
 func newNodeIdent(name string) *Node {
 	n := &Node{
 		Ty:   TK_IDENT,
+		Name: name,
+	}
+	return n
+}
+
+func newNodeCall(name string) *Node {
+	n := &Node{
+		Ty:   TK_CALL,
 		Name: name,
 	}
 	return n

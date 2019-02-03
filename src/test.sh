@@ -33,5 +33,7 @@ try 0 "test= 5==6;test;"
 try 0 "test= 5!=5;test;"
 try 1 "test= 5!=6;test;"
 try 0 "foo();"
+try 0 "a=1; bar(a,2,3);"
+try 0 "b=1; barr(1,b,3,4,5,6,7,8,9);"
 
 echo OK

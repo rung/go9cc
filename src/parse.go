@@ -11,6 +11,7 @@ type Node struct {
 	Rhs  *Node
 	Val  int    // // used when Ty is TK_INT
 	Name string // used when Ty is TK_IDENT
+	Args []*Node
 }
 
 var code []*Node
@@ -61,8 +62,18 @@ func funcCall() *Node {
 
 	if consume("(") {
 		node = newNodeCall(node.Name)
+		if consume(")") {
+			return node
+		}
+
+		node.Args = append(node.Args, add())
+
+		for consume(",") {
+			node.Args = append(node.Args, add())
+		}
+
 		if !consume(")") {
-			fmt.Fprintf(os.Stderr, "There isn't a closing parenthesis: %s",
+			fmt.Fprintf(os.Stderr, "There isn't a closing parenthesis: %s\n",
 				tokens[pos].Input)
 			os.Exit(1)
 		}
@@ -158,6 +169,7 @@ func newNodeCall(name string) *Node {
 	n := &Node{
 		Ty:   TK_CALL,
 		Name: name,
+		Args: []*Node{},
 	}
 	return n
 }

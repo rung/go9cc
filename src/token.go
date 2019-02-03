@@ -28,6 +28,7 @@ const (
 	TK_EQ     = "=="
 	TK_NOTEQ  = "!="
 	TK_CALL   = "CALL"
+	TK_COMMA  = ","
 )
 
 // トークナイズした結果のトークン列はこのスライスに保存する
@@ -46,7 +47,7 @@ func tokenize(l string) {
 			continue
 		}
 
-		if c == '+' || c == '-' || c == '*' || c == '/' || c == '(' || c == ')' || c == ';' {
+		if c == '+' || c == '-' || c == '*' || c == '/' || c == '(' || c == ')' || c == ';' || c == ',' {
 			t := Token{
 				Ty:    TokenType(c),
 				Input: l,

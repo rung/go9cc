@@ -39,5 +39,6 @@ try 3 "main(){b=3;return b; c=5; return c;}"
 try 1 "sub(){return 1;} main(){return sub();}"
 try 15 "sub(){return 15;} main(){return sub();}"
 try 20 "sub(){return 15;} main(){return sub()+5;}"
+try 0 "main(){a=1+3;}"
 
 echo OK

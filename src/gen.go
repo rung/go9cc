@@ -23,9 +23,8 @@ func startGen(f *Func) {
 		gen_stmt(c)
 	}
 
-	// ToDo: return文実装済みなので下記は不要かもしれない
-	fmt.Println("  pop rax")
-	// 最後の式の結果がRAXに残っているのでそれが返り値になる
+	// returnがないとき、正常終了時は0を返す
+	fmt.Println("  mov rax, 0")
 	fmt.Println("  mov rsp, rbp")
 	fmt.Println("  pop rbp")
 	fmt.Println("  ret")

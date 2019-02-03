@@ -30,8 +30,9 @@ const (
 	TK_CALL   = "CALL"
 	TK_FUNC   = "FUNC"
 	TK_COMMA  = ","
-	LBRACE    = "{"
-	RBRACE    = "}"
+	TK_LBRACE = "{"
+	TK_RBRACE = "}"
+	TK_RETURN = "RETURN"
 )
 
 // トークナイズした結果のトークン列はこのスライスに保存する

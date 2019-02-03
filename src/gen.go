@@ -47,6 +47,15 @@ func gen(n *Node) {
 		return
 	}
 
+	if n.Ty == TK_RETURN {
+		gen(n.Ret)
+		fmt.Println("  pop rax")
+		fmt.Println("  mov rsp, rbp")
+		fmt.Println("  pop rbp")
+		fmt.Println("  ret")
+		return
+	}
+
 	if n.Ty == "=" {
 		genLval(n.Lhs)
 		gen(n.Rhs)

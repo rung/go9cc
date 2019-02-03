@@ -9,9 +9,10 @@ type Node struct {
 	Ty   TokenType
 	Lhs  *Node
 	Rhs  *Node
-	Val  int    // // used when Ty is TK_INT
-	Name string // used when Ty is TK_IDENT
-	Args []*Node
+	Val  int     // // used when Ty is TK_INT
+	Name string  // used when Ty is TK_IDENT
+	Args []*Node // used when Ty is TK_CALL
+	Ret  *Node   // used when Ty is TK_RETURN
 }
 
 type Func struct {
@@ -52,6 +53,17 @@ func toplevel() {
 }
 
 func stmt() *Node {
+	if consume(TK_RETURN) {
+		n := assign()
+		n = newNodeReturn(n)
+
+		if !consume(";") {
+			fmt.Fprintf(os.Stderr, "This token is not ';': %s", tokens[pos].Input)
+		}
+
+		return n
+	}
+
 	n := assign()
 	if !consume(";") {
 		fmt.Fprintf(os.Stderr, "This token is not ';': %s", tokens[pos].Input)
@@ -187,6 +199,14 @@ func newNode(ty TokenType, lhs *Node, rhs *Node) *Node {
 		Ty:  ty,
 		Lhs: lhs,
 		Rhs: rhs,
+	}
+	return n
+}
+
+func newNodeReturn(node *Node) *Node {
+	n := &Node{
+		Ty:  TK_RETURN,
+		Ret: node,
 	}
 	return n
 }

@@ -21,7 +21,6 @@ func main() {
 
 	for _, v := range funcs {
 		startGen(v)
-
 	}
 	return
 }

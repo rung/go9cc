@@ -29,6 +29,7 @@ func startGen(f *Func) {
 	fmt.Println("  mov rsp, rbp")
 	fmt.Println("  pop rbp")
 	fmt.Println("  ret")
+	fmt.Println()
 
 }
 
@@ -52,8 +53,7 @@ func gen_stmt(n *Node) {
 			}
 		}
 		fmt.Printf("  call %s\n", n.Name)
-		//fmt.Println("  push rax")
-		fmt.Println("  push 0")
+		fmt.Println("  push rax")
 		return
 	}
 

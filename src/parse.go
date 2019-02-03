@@ -20,11 +20,9 @@ type Func struct {
 	code []*Node
 }
 
-var code []*Node
-var funcs map[string]*Func = make(map[string]*Func)
+var funcs []*Func
 
 func program() {
-
 	for tokens[pos].Ty != TK_EOF {
 		toplevel()
 	}
@@ -33,7 +31,8 @@ func program() {
 // function定義
 func toplevel() {
 	name := ident()
-	funcs[name.Name] = &Func{name: name.Name}
+	f := &Func{name: name.Name, code: []*Node{}}
+	funcs = append(funcs, f)
 
 	if !consume("(") {
 		fmt.Fprintf(os.Stderr, "This token is not '(': %s", tokens[pos].Input)
@@ -45,9 +44,8 @@ func toplevel() {
 	}
 
 	if consume("{") {
-		funcs[name.Name].code = []*Node{}
 		for !consume("}") {
-			funcs[name.Name].code = append(funcs[name.Name].code, stmt())
+			f.code = append(f.code, stmt())
 		}
 	}
 }
@@ -84,41 +82,17 @@ func assign() *Node {
 }
 
 func equality() *Node {
-	node := funcCall()
+	node := add()
 
 	for {
 		if consume("==") {
-			node = newNode("==", node, funcCall())
+			node = newNode("==", node, add())
 		} else if consume("!=") {
-			node = newNode("!=", node, funcCall())
+			node = newNode("!=", node, add())
 		} else {
 			return node
 		}
 	}
-}
-
-func funcCall() *Node {
-	node := add()
-
-	if consume("(") {
-		node = newNodeCall(node.Name)
-		if consume(")") {
-			return node
-		}
-
-		node.Args = append(node.Args, add())
-
-		for consume(",") {
-			node.Args = append(node.Args, add())
-		}
-
-		if !consume(")") {
-			fmt.Fprintf(os.Stderr, "There isn't a closing parenthesis: %s\n",
-				tokens[pos].Input)
-			os.Exit(1)
-		}
-	}
-	return node
 }
 
 func add() *Node {
@@ -170,6 +144,26 @@ func term() *Node {
 	if tokens[pos].Ty == TK_IDENT {
 		n := newNodeIdent(tokens[pos].Input)
 		pos++
+
+		// function call
+		if consume("(") {
+			n = newNodeCall(n.Name)
+			if consume(")") {
+				return n
+			}
+
+			n.Args = append(n.Args, add())
+
+			for consume(",") {
+				n.Args = append(n.Args, add())
+			}
+
+			if !consume(")") {
+				fmt.Fprintf(os.Stderr, "There isn't a closing parenthesis: %s\n",
+					tokens[pos].Input)
+				os.Exit(1)
+			}
+		}
 		return n
 	}
 

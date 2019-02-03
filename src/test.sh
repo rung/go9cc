@@ -36,6 +36,8 @@ try 0 "main(){foo(); return 0;}"
 try 0 "main(){a=1; bar(a,2,3); return 0;}"
 try 0 "main(){b=1; barr(1,b,3,4,5,6,7,8,9); return 0;}"
 try 3 "main(){b=3;return b; c=5; return c;}"
-#try 1 "sub(){return 1;} main(){return sub();}"
+try 1 "sub(){return 1;} main(){return sub();}"
+try 15 "sub(){return 15;} main(){return sub();}"
+try 20 "sub(){return 15;} main(){return sub()+5;}"
 
 echo OK

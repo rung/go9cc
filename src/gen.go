@@ -9,11 +9,34 @@ import (
 var maps map[string]int = make(map[string]int)
 var offset int = 1
 
-func gen(n *Node) {
+func startGen(f *Func) {
+	fmt.Println(".text")
+	fmt.Printf(".global %s\n", f.name)
+	fmt.Printf("%s:\n", f.name)
+
+	// get an area of variables
+	fmt.Println("  push rbp")
+	fmt.Println("  mov rbp, rsp")
+	fmt.Println("  sub rsp, 208")
+
+	for _, c := range f.code {
+		gen_stmt(c)
+	}
+
+	// ToDo: return文実装済みなので下記は不要かもしれない
+	fmt.Println("  pop rax")
+	// 最後の式の結果がRAXに残っているのでそれが返り値になる
+	fmt.Println("  mov rsp, rbp")
+	fmt.Println("  pop rbp")
+	fmt.Println("  ret")
+
+}
+
+func gen_stmt(n *Node) {
 	if n.Ty == TK_CALL {
 		for r := range n.Args {
 			i := len(n.Args) - r - 1
-			gen(n.Args[i])
+			gen_stmt(n.Args[i])
 			if i == 0 {
 				fmt.Println("  pop rdi")
 			} else if i == 1 {
@@ -48,7 +71,7 @@ func gen(n *Node) {
 	}
 
 	if n.Ty == TK_RETURN {
-		gen(n.Ret)
+		gen_stmt(n.Ret)
 		fmt.Println("  pop rax")
 		fmt.Println("  mov rsp, rbp")
 		fmt.Println("  pop rbp")
@@ -58,7 +81,7 @@ func gen(n *Node) {
 
 	if n.Ty == "=" {
 		genLval(n.Lhs)
-		gen(n.Rhs)
+		gen_stmt(n.Rhs)
 
 		fmt.Println("  pop rdi")
 		fmt.Println("  pop rax")
@@ -67,8 +90,8 @@ func gen(n *Node) {
 		return
 	}
 
-	gen(n.Lhs)
-	gen(n.Rhs)
+	gen_stmt(n.Lhs)
+	gen_stmt(n.Rhs)
 
 	fmt.Println("  pop rdi")
 	fmt.Println("  pop rax")

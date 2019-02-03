@@ -112,11 +112,20 @@ func tokenize(l string) {
 		}
 
 		if 'a' <= c && c <= 'z' {
-			str, n := readIdent(l[rp:])
-			t := Token{
-				Ty:    TK_IDENT,
-				Input: str,
+			str, n := readString(l[rp:])
+			t := Token{}
+			if str == "return" {
+				t = Token{
+					Ty:    TK_RETURN,
+					Input: str,
+				}
+			} else {
+				t = Token{
+					Ty:    TK_IDENT,
+					Input: str,
+				}
 			}
+
 			tokens = append(tokens, t)
 			rp += n
 			continue
@@ -150,7 +159,7 @@ func readInt(s string) (int, int) {
 	return i, len(s[0:p])
 }
 
-func readIdent(s string) (string, int) {
+func readString(s string) (string, int) {
 	p := 0
 	for 'a' <= s[p] && s[p] <= 'z' {
 		p++

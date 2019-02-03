@@ -26,7 +26,7 @@ func main() {
 	fmt.Println("  mov rbp, rsp")
 	fmt.Println("  sub rsp, 208")
 
-	for _, c := range code {
+	for _, c := range funcs["main"].code {
 		gen(c)
 
 		// 式の評価結果としてスタックに一つの値が残っている

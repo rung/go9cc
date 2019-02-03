@@ -14,15 +14,43 @@ type Node struct {
 	Args []*Node
 }
 
+type Func struct {
+	name string
+	code []*Node
+}
+
 var code []*Node
+var funcs map[string]*Func = make(map[string]*Func)
 
 func program() {
-	code = []*Node{}
 
 	for tokens[pos].Ty != TK_EOF {
-		code = append(code, stmt())
+		toplevel()
 	}
 }
+
+// function定義
+func toplevel() {
+	name := ident()
+	funcs[name.Name] = &Func{name: name.Name}
+
+	if !consume("(") {
+		fmt.Fprintf(os.Stderr, "This token is not '(': %s", tokens[pos].Input)
+		os.Exit(1)
+	}
+	if !consume(")") {
+		fmt.Fprintf(os.Stderr, "This token is not '(': %s", tokens[pos].Input)
+		os.Exit(1)
+	}
+
+	if consume("{") {
+		funcs[name.Name].code = []*Node{}
+		for !consume("}") {
+			funcs[name.Name].code = append(funcs[name.Name].code, stmt())
+		}
+	}
+}
+
 func stmt() *Node {
 	n := assign()
 	if !consume(";") {
@@ -134,6 +162,20 @@ func term() *Node {
 	}
 
 	fmt.Fprintf(os.Stderr, "This token isn't a number or opening parenhesis: %s",
+		tokens[pos].Input)
+	os.Exit((1))
+
+	return nil
+}
+
+func ident() *Node {
+	if tokens[pos].Ty == TK_IDENT {
+		n := newNodeIdent(tokens[pos].Input)
+		pos++
+		return n
+	}
+
+	fmt.Fprintf(os.Stderr, "This token isn't a ident: %s",
 		tokens[pos].Input)
 	os.Exit((1))
 
